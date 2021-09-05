@@ -1,0 +1,14 @@
+var data = "country_iso3=CIV&network=MTN&notification%5B1%5D%5Bstatus%5D=1&notification%5B1%5D%5Btype%5D=danger&notification%5B1%5D%5Bheader%5D=TEST1%20Indisponible&notification%5B1%5D%5Bbody%5D=%3Cp%20style%3D%22color%3A%23856404%3B%22%3E%3Cb%3EVerifiez%20les%20prix%3C%2Fb%3E.%20Les%20prix%20doivent%20commencer%20par%20C%24%20pour%20le%20dollar%20canadien.%20Pour%20changer%2C%20retournez%20a%20la%20page%20de%20depart%20et%20dans%20le%20menu%20du%20bas%20faite%20%20%3Cb%3E%22Compte%20puis%20Param%C3%A8tres%20du%20compte%22%3C%2Fb%3E.%20%3C%2Fp%3E&notification%5B1%5D%5Bfooter%5D=%3Ca%20href%3D%22www.waricel.com%22%3EMore%20details%20%3C%2Fa%3E&notification%5B2%5D%5Bstatus%5D=1&notification%5B2%5D%5Btype%5D=danger&notification%5B2%5D%5Bheader%5D=TEST1%20Indisponible&notification%5B2%5D%5Bbody%5D=%3Cp%20style%3D%22color%3A%23856404%3B%22%3E%3Cb%3EVerifiez%20les%20prix%3C%2Fb%3E.%20Les%20prix%20doivent%20commencer%20par%20C%24%20pour%20le%20dollar%20canadien.%20Pour%20changer%2C%20retournez%20a%20la%20page%20de%20depart%20et%20dans%20le%20menu%20du%20bas%20faite%20%20%3Cb%3E%22Compte%20puis%20Param%C3%A8tres%20du%20compte%22%3C%2Fb%3E.%20%3C%2Fp%3E&notification%5B2%5D%5Bfooter%5D=%3Ca%20href%3D%22www.waricel.com%22%3EMore%20details%20%3C%2Fa%3E";
+var data = "country_iso3=CIV&network=MTN&notification%5B1%5D%5Bstatus%5D=1&notification%5B1%5D%5Btype%5D=danger&notification%5B1%5D%5Bheader%5D=TEST1%20Indisponible&notification%5B1%5D%5Bbody%5D=%3Cp%20style%3D%22color%3A%23856404%3B%22%3E%3Cb%3EVerifiez%20les%20prix%3C%2Fb%3E.%20Les%20prix%20doivent%20commencer%20par%20C%24%20pour%20le%20dollar%20canadien.%20Pour%20changer%2C%20retournez%20a%20la%20page%20de%20depart%20et%20dans%20le%20menu%20du%20bas%20faite%20%20%3Cb%3E%22Compte%20puis%20Param%C3%A8tres%20du%20compte%22%3C%2Fb%3E.%20%3C%2Fp%3E&notification%5B1%5D%5Bfooter%5D=%3Ca%20href%3D%22www.waricel.com%22%3EMore%20details%20%3C%2Fa%3E&notification%5B2%5D%5Bstatus%5D=1&notification%5B2%5D%5Btype%5D=danger&notification%5B2%5D%5Bheader%5D=TEST1%20Indisponible&notification%5B2%5D%5Bbody%5D=%3Cp%20style%3D%22color%3A%23856404%3B%22%3E%3Cb%3EVerifiez%20les%20prix%3C%2Fb%3E.%20Les%20prix%20doivent%20commencer%20par%20C%24%20pour%20le%20dollar%20canadien.%20Pour%20changer%2C%20retournez%20a%20la%20page%20de%20depart%20et%20dans%20le%20menu%20du%20bas%20faite%20%20%3Cb%3E%22Compte%20puis%20Param%C3%A8tres%20du%20compte%22%3C%2Fb%3E.%20%3C%2Fp%3E&notification%5B2%5D%5Bfooter%5D=%3Ca%20href%3D%22www.waricel.com%22%3EMore%20details%20%3C%2Fa%3E";
+var xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === 4) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("POST", "https://www.beta.waricel.com/index.php?route=api/status/setNetworkNotification");
+
+xhr.send(data);

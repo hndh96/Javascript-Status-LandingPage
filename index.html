@@ -1,0 +1,1049 @@
+<html lang="en">
+
+<head>
+  <title>Country States</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="custom.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+    </script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+    integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous">
+    </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+    integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous">
+    </script>
+  <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+    crossorigin="anonymous"></script>
+  <script>
+    var localhttp = 'https://www.beta.waricel.com/';
+    var InitationData;
+
+    $(document).ready(function () {
+      test();
+    });
+
+    function InitCall() {      
+      return $.ajax({
+        type: "GET",
+        url: "https://cors-anywhere.herokuapp.com/https://www.beta.waricel.com/index.php?route=api/status/getSystemstatus&access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvd3d3LmJldGEud2FyaWNlbC5jb21cLyIsImF1ZCI6Imh0dHBzOlwvXC93d3cuYmV0YS53YXJpY2VsLmNvbVwvIiwiaWF0IjoxNjI5MDg4ODg0LCJuYmYiOjE2MjkwODg4ODQsImV4cCI6MTk0NDQ0ODg4NCwiZGF0YSI6eyJjdXN0b21lcl9pZCI6IjE5NiIsInRva2VuX3R5cGUiOiJBQ0NFU1MifX0.WhqZYYrpEBwUDmy8Rvknqqhun0m95VCb1bY7gcbBI60",
+        crossDomain: true,
+        dataType: "json",
+        headers: {
+          Authorization: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvd3d3LmJldGEud2FyaWNlbC5jb21cLyIsImF1ZCI6Imh0dHBzOlwvXC93d3cuYmV0YS53YXJpY2VsLmNvbVwvIiwiaWF0IjoxNjI5MDg4ODg0LCJuYmYiOjE2MjkwODg4ODQsImV4cCI6MTk0NDQ0ODg4NCwiZGF0YSI6eyJjdXN0b21lcl9pZCI6IjE5NiIsInRva2VuX3R5cGUiOiJBQ0NFU1MifX0.WhqZYYrpEBwUDmy8Rvknqqhun0m95VCb1bY7gcbBI60",
+          "x-requested-with": "XMLHttpRequest",
+        },
+        success: function (result) {
+          InitationData = result;
+        },
+        error: function (error) {
+          console.log("Error ", error);
+        },
+      });
+    }
+
+    async function test() {
+      try {
+        await InitCall();
+        makeUrlListHeader(InitationData);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    function makeUrlListHeader(curData) {
+      var mylist = document.getElementById("myList");
+      for (let lstitem in curData.countries) {
+        var elementlistitem = document.createElement("li");
+        elementlistitem.className = "nav-item";
+        var atagitem = document.createElement("a");
+        atagitem.innerText = curData.countries[lstitem].name;
+        atagitem.className = "nav-link";
+        atagitem.href = "#" + curData.countries[lstitem].isoCode3;
+        atagitem.style.fontSize = "30px";
+        atagitem.name = curData.countries[lstitem].isoCode3;
+        atagitem.addEventListener('click', function () {
+          for (let index in curData.countries) {
+            if (curData.countries[index].name === this.innerText) {
+              makeBodyHtmlPage(InitationData.countries[index]);
+            }
+          }
+        });
+        elementlistitem.appendChild(atagitem);
+        mylist.appendChild(elementlistitem);
+      }
+      makeBodyHtmlPage(curData.countries[0]);
+    }
+
+    function initThisPages() {
+      document.getElementById("mybody").innerHTML = "";
+    }
+
+    function makeBodyHtmlPage(curData) {
+      initThisPages();
+      makeCountryName_Flag_Status(curData);
+
+      //makeCountryStatus(curData);
+      for (let curitem in curData.networks) {
+        makeNetworkStatusFunction(curData.networks[curitem], curitem, curData.isoCode3);
+      }
+    }
+
+    function makeCountryName_Flag_Status(curData) {
+      var firstdiv = document.createElement("div");
+      firstdiv.className = "container";
+      var totaldiv = document.createElement("div");
+      totaldiv.className = "row";
+
+      //////////////////////////////////////////////////first///////////////////////////////////////////
+      var firstcoldiv = document.createElement("div");
+      firstcoldiv.className = "col-md-9";
+      firstcoldiv.style.display = "flex";
+      firstcoldiv.style.flexWrap = "nowrap";
+      firstcoldiv.style.alignContent = "flex-end";
+      firstcoldiv.style.justifyContent = "flex-start";
+      firstcoldiv.style.alignItems = "center";
+      firstcoldiv.style.paddingLeft = "2vw";
+
+      var flagimage = document.createElement("img");
+      flagimage.src = localhttp + curData.image;
+      flagimage.width = "50";
+      flagimage.height = "35";
+      var h1tag = document.createElement("h1");
+      h1tag.style.padding = "inherit";
+      h1tag.innerText = curData.name;
+
+      firstcoldiv.appendChild(flagimage);
+      firstcoldiv.appendChild(h1tag);
+
+      totaldiv.appendChild(firstcoldiv);
+      //////////////////////////////////////////////////////////////////////////////////////////////////
+      //////////////////////////////////////////////////second//////////////////////////////////////////
+      var secondcoldiv = document.createElement("div");
+      secondcoldiv.className = "col-md-3";
+      secondcoldiv.style.display = "flex";
+      secondcoldiv.style.alignItems = "center";
+
+      var secondcontainer = document.createElement("div");
+      secondcontainer.className = "container";
+      secondcontainer.style.display = "flex";
+      secondcontainer.style.alignItems = "center";
+      secondcontainer.style.justifyContent = "space-between";
+      secondcontainer.style.flexWrap = "nowrap";
+      secondcontainer.style.flexDirection = "row";
+
+      var secondfirstdiv = document.createElement("div");
+      secondfirstdiv.className = "col-md-3";
+      secondfirstdiv.innerText = "Status";
+
+      secondcontainer.appendChild(secondfirstdiv);
+
+      var secondseconddiv = document.createElement("div");
+      secondseconddiv.className = "col-md-3";
+
+      var flagcheck = document.createElement("i");
+      flagcheck.className = "fa fa-check-circle";
+      flagcheck.style.fontSize = "24px";
+      if (curData.status === "1") {
+        flagcheck.style.color = "green";
+      } else {
+        flagcheck.style.color = "red";
+      }
+      flagcheck.id = "countryflag";
+      secondseconddiv.appendChild(flagcheck);
+      secondcontainer.appendChild(secondseconddiv);
+
+      var secondthirddiv = document.createElement("div");
+      secondthirddiv.className = "col-md-3";
+      var checkdiv = document.createElement("div");
+      checkdiv.className = "form-check form-switch";
+      var inputcheck = document.createElement("input");
+      inputcheck.className = "form-check-input";
+      inputcheck.type = "checkbox";
+      if (curData.status === "1"){
+        inputcheck.checked = true;
+      }else{
+        inputcheck.checked = false;
+      }      
+
+      var autoremitspinnerpdiv = document.createElement("div");
+      autoremitspinnerpdiv.className = "col-md-3";
+
+      autoremitspinnerdiv = document.createElement("div");
+      autoremitspinnerdiv.className = "spinner-border";
+      autoremitspinnerdiv.style.display = "none";
+      autoremitspinnerdiv.role = "status";
+      autoremitspinnerdiv.id = "systemspin";
+
+      autoremitspinnerpdiv.appendChild(autoremitspinnerdiv);
+
+      checkdiv.appendChild(inputcheck);
+
+      secondthirddiv.appendChild(checkdiv);
+
+      secondcontainer.appendChild(secondthirddiv);
+      secondcontainer.appendChild(autoremitspinnerpdiv);
+      secondcoldiv.appendChild(secondcontainer);
+      totaldiv.appendChild(secondcoldiv);
+
+      inputcheck.addEventListener('click', function () {
+        //system status
+        var flag;
+        var formData = "country_iso3=" + curData.isoCode3 + "&status=";
+        if (document.getElementById("countryflag").style.color === "green") formData += "0", flag = 0;
+        else formData += "1", flag = 1;
+
+        $.ajax({
+          url: ("https://cors-anywhere.herokuapp.com/" + localhttp +
+            "index.php?route=api/status/setCountryStatus&access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvd3d3LmJldGEud2FyaWNlbC5jb21cLyIsImF1ZCI6Imh0dHBzOlwvXC93d3cuYmV0YS53YXJpY2VsLmNvbVwvIiwiaWF0IjoxNjI5MDg4ODg0LCJuYmYiOjE2MjkwODg4ODQsImV4cCI6MTk0NDQ0ODg4NCwiZGF0YSI6eyJjdXN0b21lcl9pZCI6IjE5NiIsInRva2VuX3R5cGUiOiJBQ0NFU1MifX0.WhqZYYrpEBwUDmy8Rvknqqhun0m95VCb1bY7gcbBI60"
+          ),
+          type: 'POST',
+          data: formData,
+          beforeSend: function () {
+            document.getElementById("systemspin").style.display = "block";
+          },
+          headers: {
+            Authorization: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvd3d3LmJldGEud2FyaWNlbC5jb21cLyIsImF1ZCI6Imh0dHBzOlwvXC93d3cuYmV0YS53YXJpY2VsLmNvbVwvIiwiaWF0IjoxNjI5MDg4ODg0LCJuYmYiOjE2MjkwODg4ODQsImV4cCI6MTk0NDQ0ODg4NCwiZGF0YSI6eyJjdXN0b21lcl9pZCI6IjE5NiIsInRva2VuX3R5cGUiOiJBQ0NFU1MifX0.WhqZYYrpEBwUDmy8Rvknqqhun0m95VCb1bY7gcbBI60",
+            "x-requested-with": "XMLHttpRequest",
+          },
+          error: function (err) {
+            console.log('Error!', err);
+            document.getElementById("systemspin").style.display = "none";
+          },
+          success: function (data) {
+            InitationData = InitCall();
+            document.getElementById("systemspin").style.display = "none";
+            localStorage.setItem('token', data.id_token);
+            if (flag === 1) {
+              document.getElementById("countryflag").style.color = "green";
+            } else {
+              document.getElementById("countryflag").style.color = "red";
+            }
+          }
+        });
+      });
+      //////////////////////////////////////////////////////////////////////////////////////////////////   
+      document.getElementById("mybody").appendChild(totaldiv);
+    }
+
+    function makeNetworkStatusFunction(curData, curindex, countrycode) {
+
+      var totaldiv = document.createElement("div");
+      totaldiv.className = "container";
+      var horizonline = document.createElement("hr");
+      horizonline.size = "8";
+      horizonline.width = "100%";
+      horizonline.color = "blue";
+      totaldiv.appendChild(horizonline);
+
+
+      var logodiv = document.createElement("div");
+      logodiv.className = "row";
+
+      var logoimagediv = document.createElement("div");
+      logoimagediv.className = "col-md-4";
+      logoimagediv.style.display = "flex";
+      logoimagediv.style.flexWrap = "nowrap";
+      logoimagediv.style.alignContent = "flex-end";
+      logoimagediv.style.justifyContent = "flex-start";
+      logoimagediv.style.alignItems = "center";
+
+      var logoimage = document.createElement("img");
+      logoimage.src = localhttp + curData.image;
+      logoimage.width = "30";
+      logoimage.height = "30";
+      logoimagediv.appendChild(logoimage);
+
+      var logotext = document.createElement("h3");
+      logotext.style.paddingLeft = "1vw";
+      logotext.innerText = curData.name;
+
+      logoimagediv.appendChild(logotext);
+
+      totaldiv.appendChild(logoimagediv);
+
+      var pdiv = document.createElement("p");
+      totaldiv.appendChild(pdiv);
+
+      var autoremitdiv = document.createElement("div");
+      autoremitdiv.className = "col-md-4";
+      autoremitdiv.style.display = "flex";
+      autoremitdiv.style.alignItems = "center";
+      autoremitdiv.style.justifyContent = "space-between";
+      autoremitdiv.style.flexWrap = "nowrap";
+      autoremitdiv.style.flexDirection = "row";
+
+      var autoremit = document.createElement("strong");
+      autoremit.innerText = "AutoRemit";
+
+      autoremitdiv.appendChild(autoremit);
+
+      var autoremiticondiv = document.createElement("div");
+      autoremiticondiv.className = "col-md-8";
+      autoremiticondiv.style.display = "flex";
+      autoremiticondiv.style.justifyContent = "space-around";
+
+      var autoremitcheckicon = document.createElement("i");
+      autoremitcheckicon.className = "fa fa-check-circle";
+      autoremitcheckicon.style.fontSize = "24px";
+      autoremitcheckicon.id = "autoremit-" + curData.name;
+
+      var autoremitcheckdiv = document.createElement("div");
+      autoremitcheckdiv.className = "form-check form-switch";
+
+      var autoremitcheckbutton = document.createElement("input");
+      autoremitcheckbutton.className = "form-check-input";
+      autoremitcheckbutton.type = "checkbox";
+      autoremitcheckbutton.id = "autoremitcheck";
+
+      var coldiv = document.createElement("div");
+      coldiv.className = "col-md-3";
+      autoremitspinnerdiv = document.createElement("div");
+      autoremitspinnerdiv.className = "spinner-border";
+      autoremitspinnerdiv.role = "status";
+      autoremitspinnerdiv.id = "remitspin-" + curData.name;
+      autoremitspinnerdiv.style.display = "none";
+
+      coldiv.appendChild(autoremitspinnerdiv);
+
+      if (curData.autoremit === "1") {
+        autoremitcheckicon.style.color = "green";
+        autoremitcheckbutton.checked = true;
+      } else {
+        autoremitcheckicon.style.color = "red";
+        autoremitcheckbutton.checked = false;
+      }
+
+      autoremitcheckbutton.addEventListener('click', function () {
+        var formData = "country_iso3=" + countrycode + "&network=" + curData.name + "&remit=";
+        var flag;
+        if (document.getElementById("autoremit-" + curData.name).style.color === "green") formData += "0", flag = false;
+        else formData += "1", flag = true;
+
+        $.ajax({
+          url: ("https://cors-anywhere.herokuapp.com/" + localhttp +
+            "index.php?route=api/status/setNetworkRemit&access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvd3d3LmJldGEud2FyaWNlbC5jb21cLyIsImF1ZCI6Imh0dHBzOlwvXC93d3cuYmV0YS53YXJpY2VsLmNvbVwvIiwiaWF0IjoxNjI5MDg4ODg0LCJuYmYiOjE2MjkwODg4ODQsImV4cCI6MTk0NDQ0ODg4NCwiZGF0YSI6eyJjdXN0b21lcl9pZCI6IjE5NiIsInRva2VuX3R5cGUiOiJBQ0NFU1MifX0.WhqZYYrpEBwUDmy8Rvknqqhun0m95VCb1bY7gcbBI60"
+          ),
+          type: 'POST',
+          data: formData,
+          beforeSend: function () {
+            document.getElementById("remitspin-" + curData.name).style.display = "block";
+          },
+          headers: {
+            Authorization: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvd3d3LmJldGEud2FyaWNlbC5jb21cLyIsImF1ZCI6Imh0dHBzOlwvXC93d3cuYmV0YS53YXJpY2VsLmNvbVwvIiwiaWF0IjoxNjI5MDg4ODg0LCJuYmYiOjE2MjkwODg4ODQsImV4cCI6MTk0NDQ0ODg4NCwiZGF0YSI6eyJjdXN0b21lcl9pZCI6IjE5NiIsInRva2VuX3R5cGUiOiJBQ0NFU1MifX0.WhqZYYrpEBwUDmy8Rvknqqhun0m95VCb1bY7gcbBI60",
+            "x-requested-with": "XMLHttpRequest",
+          },
+          error: function (err) {
+            console.log('Error!', err);
+            document.getElementById("remitspin-" + curData.name).style.display = "none";
+          },
+          success: function (data) {
+            InitationData = InitCall();
+            if (flag) {
+              autoremitcheckicon.style.color = "green";
+            } else {
+              autoremitcheckicon.style.color = "red";
+            }
+            document.getElementById("remitspin-" + curData.name).style.display = "none";
+            localStorage.setItem('token', data.id_token);
+          }
+        });
+      });
+
+      autoremitcheckdiv.appendChild(autoremitcheckbutton);
+      autoremiticondiv.appendChild(autoremitcheckicon);
+
+      autoremiticondiv.appendChild(autoremitcheckdiv);
+      autoremiticondiv.appendChild(coldiv);
+
+      autoremitdiv.appendChild(autoremiticondiv);
+      totaldiv.appendChild(autoremitdiv);
+      var horizonline_min_1 = document.createElement("hr");
+      horizonline_min_1.size = "4";
+      horizonline_min_1.width = "100%";
+      horizonline_min_1.color = "blue";
+      totaldiv.appendChild(horizonline_min_1);
+
+      var networkstatusdiv = document.createElement("div");
+      networkstatusdiv.className = "col-md-4";
+      networkstatusdiv.style.display = "flex";
+      networkstatusdiv.style.alignItems = "center";
+      networkstatusdiv.style.justifyContent = "space-between";
+      networkstatusdiv.style.flexWrap = "nowrap";
+      networkstatusdiv.style.flexDirection = "row";
+
+      var networkstatus = document.createElement("strong");
+      networkstatus.innerText = "networkstatus";
+
+      networkstatusdiv.appendChild(networkstatus);
+
+      var networkstatusicondiv = document.createElement("div");
+      networkstatusicondiv.className = "col-md-8";
+      networkstatusicondiv.style.display = "flex";
+      networkstatusicondiv.style.justifyContent = "space-around";
+
+      var networkstatuscheckicon = document.createElement("i");
+      networkstatuscheckicon.className = "fa fa-check-circle";
+      networkstatuscheckicon.style.fontSize = "24px";
+      networkstatuscheckicon.id = "networkstatus-" + curData.name;
+
+      var networkstatuscheckdiv = document.createElement("div");
+      networkstatuscheckdiv.className = "form-check form-switch";
+
+      var networkstatuscheckbutton = document.createElement("input");
+      networkstatuscheckbutton.className = "form-check-input";
+      networkstatuscheckbutton.type = "checkbox";
+      networkstatuscheckbutton.id = "networkstatuscheck";
+
+      var colldiv = document.createElement("div");
+      colldiv.className = "col-md-3";
+      networkstatusspinnerdiv = document.createElement("div");
+      networkstatusspinnerdiv.className = "spinner-border";
+      networkstatusspinnerdiv.role = "status";
+      networkstatusspinnerdiv.id = "netspin-" + curData.name;
+      networkstatusspinnerdiv.style.display = "none";
+
+      colldiv.appendChild(networkstatusspinnerdiv);
+
+      if (curData.status === "1") {
+        networkstatuscheckicon.style.color = "green";
+        networkstatuscheckbutton.checked = true;
+      } else {
+        networkstatuscheckicon.style.color = "red";
+        networkstatuscheckbutton.checked = false;
+      }
+
+      networkstatuscheckbutton.addEventListener('click', function () {
+        //system status
+        var flag;
+        var formData = "country_iso3=" + countrycode + "&network=" + curData.name + "&status=";
+        if (document.getElementById("networkstatus-" + curData.name).style.color === "green") formData += "0", flag = 0;
+        else formData += "1", flag = 1;
+
+        $.ajax({
+          url: ("https://cors-anywhere.herokuapp.com/" + localhttp +
+            "index.php?route=api/status/setNetworkStatus&access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvd3d3LmJldGEud2FyaWNlbC5jb21cLyIsImF1ZCI6Imh0dHBzOlwvXC93d3cuYmV0YS53YXJpY2VsLmNvbVwvIiwiaWF0IjoxNjI5MDg4ODg0LCJuYmYiOjE2MjkwODg4ODQsImV4cCI6MTk0NDQ0ODg4NCwiZGF0YSI6eyJjdXN0b21lcl9pZCI6IjE5NiIsInRva2VuX3R5cGUiOiJBQ0NFU1MifX0.WhqZYYrpEBwUDmy8Rvknqqhun0m95VCb1bY7gcbBI60"
+          ),
+          type: 'POST',
+          data: formData,
+          beforeSend: function () {
+            document.getElementById("netspin-" + curData.name).style.display = "block";
+          },
+          headers: {
+            Authorization: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvd3d3LmJldGEud2FyaWNlbC5jb21cLyIsImF1ZCI6Imh0dHBzOlwvXC93d3cuYmV0YS53YXJpY2VsLmNvbVwvIiwiaWF0IjoxNjI5MDg4ODg0LCJuYmYiOjE2MjkwODg4ODQsImV4cCI6MTk0NDQ0ODg4NCwiZGF0YSI6eyJjdXN0b21lcl9pZCI6IjE5NiIsInRva2VuX3R5cGUiOiJBQ0NFU1MifX0.WhqZYYrpEBwUDmy8Rvknqqhun0m95VCb1bY7gcbBI60",
+            "x-requested-with": "XMLHttpRequest",
+          },
+          error: function (err) {
+            console.log('Error!', err);
+            document.getElementById("netspin-" + curData.name).style.display = "none";
+          },
+          success: function (data) {
+            InitationData = InitCall();
+            document.getElementById("netspin-" + curData.name).style.display = "none";
+            localStorage.setItem('token', data.id_token);
+            if (flag) {
+              networkstatuscheckicon.style.color = "green";
+            } else {
+              networkstatuscheckicon.style.color = "red";
+            }
+          }
+        });
+      });
+
+      networkstatuscheckdiv.appendChild(networkstatuscheckbutton);
+      networkstatusicondiv.appendChild(networkstatuscheckicon);
+
+      networkstatusicondiv.appendChild(networkstatuscheckdiv);
+      networkstatusicondiv.appendChild(colldiv);
+
+      networkstatusdiv.appendChild(networkstatusicondiv);
+      totaldiv.appendChild(networkstatusdiv);
+
+      var horizonline_min_2 = document.createElement("hr");
+      horizonline_min_2.size = "4";
+      horizonline_min_2.width = "100%";
+      horizonline_min_2.color = "blue";
+      totaldiv.appendChild(horizonline_min_2);
+
+      var phonesdiv = document.createElement("div");
+      phonesdiv.className = "row";
+      var phonesstringdiv = document.createElement("div");
+      var phonestringstrong = document.createElement("strong");
+      phonestringstrong.innerText = "Phones";
+      phonesstringdiv.appendChild(phonestringstrong);
+      phonesdiv.appendChild(phonesstringdiv);
+      var phonestempp = document.createElement("p");
+      phonesdiv.appendChild(phonestempp);
+
+
+      var phonestablediv = document.createElement("div");
+      phonestablediv.style.paddingLeft = "2vw";
+
+      var phonestable = document.createElement("table");
+      phonestable.className = "table table-bordered";
+
+      var phonestablehead = document.createElement("thead");
+      phonestablehead.className = "thead-dark";
+      phonestablehead.style.backgroundColor = "#0005";
+
+      var phonestableheadtr = document.createElement("tr");
+
+      var phonestableheadthphone = document.createElement("th");
+      phonestableheadthphone.scope = "col";
+      phonestableheadthphone.innerText = "Phone#";
+      phonestableheadtr.appendChild(phonestableheadthphone);
+
+      var phonestableheadthstatus = document.createElement("th");
+      phonestableheadthstatus.scope = "col";
+      phonestableheadthstatus.innerText = "Status";
+      phonestableheadtr.appendChild(phonestableheadthstatus);
+
+      var phonestableheadthlocation = document.createElement("th");
+      phonestableheadthlocation.scope = "col";
+      phonestableheadthlocation.innerText = "Location";
+      phonestableheadtr.appendChild(phonestableheadthlocation);
+
+      var phonestableheadthbalance = document.createElement("th");
+      phonestableheadthbalance.scope = "col";
+      phonestableheadthbalance.innerText = "Balance";
+      phonestableheadtr.appendChild(phonestableheadthbalance);
+
+      var phonestableheadthdatebalance = document.createElement("th");
+      phonestableheadthdatebalance.scope = "col";
+      phonestableheadthdatebalance.innerText = "Date Balance";
+      phonestableheadtr.appendChild(phonestableheadthdatebalance);
+
+      var phonestableheadthsdateused = document.createElement("th");
+      phonestableheadthsdateused.scope = "col";
+      phonestableheadthsdateused.innerText = "Date Used";
+      phonestableheadtr.appendChild(phonestableheadthsdateused);
+
+      phonestablehead.appendChild(phonestableheadtr);
+      var phonestablebody = document.createElement("tbody");
+
+      for (let tableitem in curData.phones) {
+        var phonestablebodytr = document.createElement("tr");
+        var phonestablebodyphone = document.createElement("td");
+        phonestablebodyphone.scope = "row";
+        phonestablebodyphone.innerText = curData.phones[tableitem].phoneNumber;
+        phonestablebodytr.appendChild(phonestablebodyphone);
+
+        var phonestablebodystatus = document.createElement("td");
+        phonestablebodystatus.style.display = "flex";
+        phonestablebodystatus.style.alignItems = "center";
+
+        var phonestablebodystatusdiv = document.createElement("div");
+        phonestablebodystatusdiv.className = "col-md-5";
+
+        var phonestablebodystatusdivdiv = document.createElement("div");
+        phonestablebodystatusdivdiv.className = "form-check form-switch";
+
+        var phonestablebodystatusdivdivinput = document.createElement("input");
+        phonestablebodystatusdivdivinput.className = "form-check-input";
+        phonestablebodystatusdivdivinput.type = "checkbox";
+        phonestablebodystatusdivdivinput.id = "phones" + curindex.toString() + "-" + tableitem.toString();
+
+        phonestablespinner = document.createElement("div");
+        phonestablespinner.className = "spinner-border";
+        phonestablespinner.role = "status";
+        phonestablespinner.id = "phonespin" + curindex.toString() + "-" + tableitem.toString();
+        phonestablespinner.style.display = "none";
+
+        if (curData.phones[tableitem].status === "1") {
+          phonestablebodystatusdivdivinput.checked = true;
+        } else {
+          phonestablebodystatusdivdivinput.checked = false;
+        }
+
+        phonestablebodystatusdivdivinput.addEventListener('click', function () {
+          var flag;
+          var formData = "country_iso3=" + countrycode + "&network=" + curData.name + "&phone=" + curData.phones[tableitem].phoneNumber + "&status=";
+          if (document.getElementById("phones" + curindex.toString() + "-" + tableitem.toString()).checked === false) formData += "0", flag = 0;
+          else formData += "1", flag = 1;
+
+          $.ajax({
+            url: ("https://cors-anywhere.herokuapp.com/" + localhttp +
+              "index.php?route=api/status/setPhoneStatus&access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvd3d3LmJldGEud2FyaWNlbC5jb21cLyIsImF1ZCI6Imh0dHBzOlwvXC93d3cuYmV0YS53YXJpY2VsLmNvbVwvIiwiaWF0IjoxNjI5MDg4ODg0LCJuYmYiOjE2MjkwODg4ODQsImV4cCI6MTk0NDQ0ODg4NCwiZGF0YSI6eyJjdXN0b21lcl9pZCI6IjE5NiIsInRva2VuX3R5cGUiOiJBQ0NFU1MifX0.WhqZYYrpEBwUDmy8Rvknqqhun0m95VCb1bY7gcbBI60"
+            ),
+            type: 'POST',
+            data: formData,
+            beforeSend: function () {
+              document.getElementById("phonespin" + curindex.toString() + "-" + tableitem.toString()).style.display = "block";
+            },
+            headers: {
+              Authorization: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvd3d3LmJldGEud2FyaWNlbC5jb21cLyIsImF1ZCI6Imh0dHBzOlwvXC93d3cuYmV0YS53YXJpY2VsLmNvbVwvIiwiaWF0IjoxNjI5MDg4ODg0LCJuYmYiOjE2MjkwODg4ODQsImV4cCI6MTk0NDQ0ODg4NCwiZGF0YSI6eyJjdXN0b21lcl9pZCI6IjE5NiIsInRva2VuX3R5cGUiOiJBQ0NFU1MifX0.WhqZYYrpEBwUDmy8Rvknqqhun0m95VCb1bY7gcbBI60",
+              "x-requested-with": "XMLHttpRequest",
+            },
+            error: function (err) {
+              console.log('Error!', err);
+              document.getElementById("phonespin" + curindex.toString() + "-" + tableitem.toString()).style.display = "none";
+            },
+            success: function (data) {
+              InitationData = InitCall();
+              document.getElementById("phonespin" + curindex.toString() + "-" + tableitem.toString()).style.display = "none";
+              localStorage.setItem('token', data.id_token);
+            }
+          });
+        });
+
+        phonestablebodystatusdivdiv.appendChild(phonestablebodystatusdivdivinput);
+        phonestablebodystatusdivdiv.appendChild(phonestablespinner);
+        phonestablebodystatusdiv.appendChild(phonestablebodystatusdivdiv);
+        phonestablebodystatus.appendChild(phonestablebodystatusdiv);
+
+
+        phonestablebodytr.appendChild(phonestablebodystatus);
+
+        var phonestablebodylocation = document.createElement("td");
+        phonestablebodylocation.innerText = curData.phones[tableitem].location;
+        phonestablebodytr.appendChild(phonestablebodylocation);
+
+        var phonestablebodybalance = document.createElement("td");
+        phonestablebodybalance.innerText = curData.phones[tableitem].balance;
+        phonestablebodytr.appendChild(phonestablebodybalance);
+
+
+        var phonestablebodydatebalance = document.createElement("td");
+        phonestablebodydatebalance.innerText = curData.phones[tableitem].dateBalance;
+        phonestablebodytr.appendChild(phonestablebodydatebalance);
+
+
+        var phonestablebodydateused = document.createElement("td");
+        phonestablebodydateused.innerText = curData.phones[tableitem].dateUsed;
+        phonestablebodytr.appendChild(phonestablebodydateused);
+        phonestablebody.appendChild(phonestablebodytr);
+      }
+
+      phonestable.appendChild(phonestablehead);
+      phonestable.appendChild(phonestablebody);
+      phonestablediv.appendChild(phonestable);
+      phonesdiv.appendChild(phonestablediv);
+      //   //////////////////////////////////////////////////////////////////////////////////
+
+      totaldiv.appendChild(phonesdiv);
+      //   /////////////////////////////////////////////////////////////////////////////////
+
+      var horizonline_min_3 = document.createElement("hr");
+      horizonline_min_3.size = "4";
+      horizonline_min_3.width = "100%";
+      horizonline_min_3.color = "blue";
+      totaldiv.appendChild(horizonline_min_3);
+
+      //   ////////////////////////////////Notification/////////////////////////////////////
+      var notificationdiv = document.createElement("div");
+      notificationdiv.className = "container";
+
+      var notisavebuttondiv = document.createElement("div");
+      notisavebuttondiv.className = "col-md-2";
+      notisavebuttondiv.style.padding = "2vw";
+
+      var notisavebutton = document.createElement("button");
+      notisavebutton.className = "btn btn-primary";
+      notisavebutton.type = "button";
+      notisavebutton.style.display = "flex";
+      notisavebutton.style.alignItems = "center";
+      notisavebutton.style.justifyContent = "space-between";
+      notisavebutton.style.flexWrap = "nowrap";
+      notisavebutton.style.flexDirection = "row";
+      notisavebutton.innerText = "Save";
+      notisavebutton.id = "savenoti";
+
+      notisavebuttonspinner = document.createElement("div");
+      notisavebuttonspinner.className = "spinner-border spinner-border-sm";
+      notisavebuttonspinner.role = "status";
+      notisavebuttonspinner.id = "savenotispin-" + curData.name;
+      notisavebuttonspinner.style.display = "none";
+
+      notisavebutton.appendChild(notisavebuttonspinner);
+      notisavebuttondiv.appendChild(notisavebutton);
+
+
+
+      var notificationdivdiv = document.createElement("div");
+      notificationdivdiv.className = "row";
+      var notificationdivdiv_1_div = document.createElement("div");
+      var notificationdivdiv_1_divstrong = document.createElement("strong");
+      notificationdivdiv_1_divstrong.innerText = "Notification";
+      notificationdivdiv_1_div.appendChild(notificationdivdiv_1_divstrong);
+
+      var notibar = document.createElement("p");
+
+      var notitabbuttondiv = document.createElement("ul");
+      notitabbuttondiv.style.paddingLeft = "2vw";
+      notitabbuttondiv.className = "nav nav-tabs mb-3";
+      notitabbuttondiv.id = "myTab";
+      notitabbuttondiv.role = "tablist";
+
+      var myarray = ["en", "fr"];
+      var titlearray = ["English", "French"]
+
+
+      for (let index in myarray) {
+        var notitabbuttonparent = document.createElement("li");
+        notitabbuttonparent.className = "nav-item";
+        notitabbuttonparent.role = "presentation";
+        notitabbuttonparent.id = "li" + myarray[index];
+
+        var notitabbutton = document.createElement("button");
+
+        notitabbutton.id = myarray[index] + "-tab";
+        notitabbutton.dataBsToggle = "tab";
+        notitabbutton.dataBsTarget = "#" + myarray[index];
+        notitabbutton.type = "button";
+        notitabbutton.role = "tab";
+        notitabbutton.style.display = "flex";
+        notitabbutton.style.alignItems = "flex-start";
+        notitabbutton.ariaControls = myarray[index];
+
+        if (index === "0") {
+          notitabbutton.ariaSelected = "true";
+          notitabbutton.className = "nav-link active";
+        } else {
+          notitabbutton.ariaSelected = "false";
+          notitabbutton.className = "nav-link";
+        }
+
+
+        var notitabbuttonimage = document.createElement("img");
+        notitabbuttonimage.className = ("flag " + myarray[index]);
+        var notitabbuttonp = document.createElement("p");
+        notitabbuttonp.innerText = titlearray[index];
+
+        notitabbuttonimage.style.width = "25";
+        notitabbuttonimage.style.height = "20";
+
+        if (myarray[index] === "en") {
+          notitabbuttonimage.src = localhttp + "image/medium/flags/us.png";
+        } else {
+          notitabbuttonimage.src = localhttp + "image/medium/flags/" + myarray[index] +
+            ".png";
+        }
+        notitabbutton.appendChild(notitabbuttonimage);
+        notitabbutton.appendChild(notitabbuttonp);
+        notitabbuttonparent.appendChild(notitabbutton);
+        notitabbuttondiv.appendChild(notitabbuttonparent);
+      }
+
+      var tabcontent = document.createElement("div");
+      tabcontent.className = "tab-content";
+
+      for (let index in myarray) {
+        var notificationtemplatediv = document.createElement("div");
+        notificationtemplatediv.id = myarray[index];
+
+        notificationtemplatediv.role = "tabpanel";
+        notificationtemplatediv.ariaLabelledby = myarray[index] + "-tab";
+
+        if (index === "0") {
+          notificationtemplatediv.className = "tab-pane active";
+        } else {
+          notificationtemplatediv.className = "tab-pane";
+        }
+
+        var notificationtemplatedivdiv = document.createElement("div");
+        notificationtemplatedivdiv.className = "container";
+
+        var notificationfirstdiv = document.createElement("div");
+        notificationfirstdiv.className = "row";
+
+        var notificationfirstdivdiv = document.createElement("div");
+        notificationfirstdivdiv.className = "col-md-4";
+
+        var notificationselectprimary = document.createElement("select");
+        notificationselectprimary.className = "form-select mb-3";
+        notificationselectprimary.dataStyle = "btn-primary";
+        notificationselectprimary.id = "selectstatus-" + curData.name + "-" + (parseInt(index, 10) + 1).toString();
+
+        var notificationprimaryoptionfirst = document.createElement("option");
+        notificationprimaryoptionfirst.innerText = "Status ON";
+        notificationprimaryoptionfirst.value = "1";
+        notificationselectprimary.appendChild(notificationprimaryoptionfirst);
+        var notificationprimaryoptionsecond = document.createElement("option");
+        notificationprimaryoptionsecond.innerText = "Status OFF";
+        notificationprimaryoptionsecond.value = "0";
+        notificationselectprimary.appendChild(notificationprimaryoptionsecond);
+
+        notificationfirstdivdiv.appendChild(notificationselectprimary);
+
+
+        var notificationfirstdivdiv_1 = document.createElement("div");
+        notificationfirstdivdiv_1.className = "col-md-3";
+
+        var notificationselectsecond = document.createElement("select");
+        notificationselectsecond.className = "form-select mb-3";
+        notificationselectsecond.dataStyle = "btn-primary";
+        notificationselectsecond.id = "selecttype-" + curData.name + "-" + (parseInt(index, 10) + 1).toString();
+
+        var notificationsecondoptionfirst = document.createElement("option");
+        notificationsecondoptionfirst.innerText = "Type Danger";
+        notificationsecondoptionfirst.value = "danger";
+        notificationselectsecond.appendChild(notificationsecondoptionfirst);
+        var notificationsecondoptionsecond = document.createElement("option");
+        notificationsecondoptionsecond.innerText = "Type Success";
+        notificationsecondoptionsecond.value = "success";
+        notificationselectsecond.appendChild(notificationsecondoptionsecond);
+        var notificationsecondoptionthird = document.createElement("option");
+        notificationsecondoptionthird.innerText = "Type Warning";
+        notificationsecondoptionthird.value = "warning";
+        notificationselectsecond.appendChild(notificationsecondoptionthird);
+
+        notificationfirstdivdiv_1.appendChild(notificationselectsecond);
+
+        notificationfirstdiv.appendChild(notificationfirstdivdiv);
+        notificationfirstdiv.appendChild(notificationfirstdivdiv_1);
+
+        var notibr = document.createElement("p");
+
+        //htmltags 
+        var notificationseconddiv = document.createElement("div");
+        notificationseconddiv.className = "row";
+
+        var notificationsecondfirstdiv = document.createElement("div");
+        notificationsecondfirstdiv.className = "col-md-4";
+
+        var notificationsecondfirsttext = document.createElement("textarea");
+        notificationsecondfirsttext.className = "span6";
+        notificationsecondfirsttext.rows = "5";
+        notificationsecondfirsttext.placeholder = "Header";
+
+        notificationsecondfirsttext.id = "headertext-" + curData.name + "-" + (parseInt(index, 10) + 1).toString();
+        notificationsecondfirsttext.style.width = "100%";
+        notificationsecondfirstdiv.appendChild(notificationsecondfirsttext);
+        notificationseconddiv.appendChild(notificationsecondfirstdiv);
+
+        var notificationsecondseconddiv = document.createElement("div");
+        notificationsecondseconddiv.className = "col-md-4"
+
+        var notificationsecondsecondtext = document.createElement("textarea");
+        notificationsecondsecondtext.className = "span6";
+        notificationsecondsecondtext.rows = "5";
+        notificationsecondsecondtext.placeholder = "Body <div>HTML Message</div>";
+        notificationsecondsecondtext.id = "bodytext-" + curData.name + "-" + (parseInt(index, 10) + 1).toString();
+
+
+        notificationsecondsecondtext.style.width = "100%";
+        notificationsecondseconddiv.appendChild(notificationsecondsecondtext);
+        notificationseconddiv.appendChild(notificationsecondseconddiv);
+
+        var notificationsecondthirddiv = document.createElement("div");
+        notificationsecondthirddiv.className = "col-md-4"
+
+        var notificationsecondthirdtext = document.createElement("textarea");
+        notificationsecondthirdtext.className = "span6";
+        notificationsecondthirdtext.rows = "5";
+        notificationsecondthirdtext.placeholder = "footer";
+        notificationsecondthirdtext.id = "footertext-" + curData.name + "-" + (parseInt(index, 10) + 1).toString();
+
+        notificationsecondthirdtext.style.width = "100%";
+        notificationsecondthirddiv.appendChild(notificationsecondthirdtext);
+        notificationseconddiv.appendChild(notificationsecondthirddiv);
+
+        notificationtemplatedivdiv.appendChild(notificationfirstdiv);
+        notificationtemplatedivdiv.appendChild(notificationseconddiv);
+        notificationtemplatedivdiv.appendChild(notibr);
+        notificationtemplatediv.appendChild(notificationtemplatedivdiv);
+        tabcontent.appendChild(notificationtemplatediv);
+        //console.log(myarray[index]);
+        for (let tabindex in curData.notifications) {
+          if (curData.notifications[tabindex].language === myarray[index]) {
+            notificationselectprimary.value = curData.notifications[tabindex].status;
+            notificationselectsecond.value = curData.notifications[tabindex].type;
+            notificationsecondfirsttext.innerText = curData.notifications[tabindex].header;
+            notificationsecondsecondtext.innerText = curData.notifications[tabindex].body;
+            notificationsecondthirdtext.innerText = curData.notifications[tabindex].footer;
+          }
+        }
+      }
+
+      notisavebutton.addEventListener('click', function () {
+        var flag, totalData = "";
+
+
+        var formData = "", changeData = "";
+        for (let tabindex in myarray) {
+          formData += "&" + encodeURIComponent("notification[" + (parseInt(tabindex, 10) + 1).toString() + "][status]") + "=" + encodeURIComponent(document.getElementById("selectstatus-" + curData.name + "-" + (parseInt(tabindex, 10) + 1).toString()).value);
+          formData += "&" + encodeURIComponent("notification[" + (parseInt(tabindex, 10) + 1).toString() + "][type]") + "=" + encodeURIComponent(document.getElementById("selecttype-" + curData.name + "-" + (parseInt(tabindex, 10) + 1).toString()).value);
+          formData += "&" + encodeURIComponent("notification[" + (parseInt(tabindex, 10) + 1).toString() + "][header]") + "=" + encodeURIComponent(document.getElementById("headertext-" + curData.name + "-" + (parseInt(tabindex, 10) + 1).toString()).value);
+          formData += "&" + encodeURIComponent("notification[" + (parseInt(tabindex, 10) + 1).toString() + "][body]") + "=" + encodeURIComponent(document.getElementById("bodytext-" + curData.name + "-" + (parseInt(tabindex, 10) + 1).toString()).value);
+          formData += "&" + encodeURIComponent("notification[" + (parseInt(tabindex, 10) + 1).toString() + "][footer]") + "=" + encodeURIComponent(document.getElementById("footertext-" + curData.name + "-" + (parseInt(tabindex, 10) + 1).toString()).value);
+        }
+
+        totdata = "country_iso3=" + countrycode + "&network=" + curData.name + formData;
+        //console.log(totdata);        
+        $.ajax({
+          url: ("https://cors-anywhere.herokuapp.com/" + localhttp +
+            "index.php?route=api/status/setNetworkNotification&access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvd3d3LmJldGEud2FyaWNlbC5jb21cLyIsImF1ZCI6Imh0dHBzOlwvXC93d3cuYmV0YS53YXJpY2VsLmNvbVwvIiwiaWF0IjoxNjI5MDg4ODg0LCJuYmYiOjE2MjkwODg4ODQsImV4cCI6MTk0NDQ0ODg4NCwiZGF0YSI6eyJjdXN0b21lcl9pZCI6IjE5NiIsInRva2VuX3R5cGUiOiJBQ0NFU1MifX0.WhqZYYrpEBwUDmy8Rvknqqhun0m95VCb1bY7gcbBI60"
+          ),
+          type: 'POST',
+          data: totdata,
+          beforeSend: function () {
+            document.getElementById("savenotispin-" + curData.name).style.display = "block";
+          },
+          headers: {
+            Authorization: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvd3d3LmJldGEud2FyaWNlbC5jb21cLyIsImF1ZCI6Imh0dHBzOlwvXC93d3cuYmV0YS53YXJpY2VsLmNvbVwvIiwiaWF0IjoxNjI5MDg4ODg0LCJuYmYiOjE2MjkwODg4ODQsImV4cCI6MTk0NDQ0ODg4NCwiZGF0YSI6eyJjdXN0b21lcl9pZCI6IjE5NiIsInRva2VuX3R5cGUiOiJBQ0NFU1MifX0.WhqZYYrpEBwUDmy8Rvknqqhun0m95VCb1bY7gcbBI60",
+            "x-requested-with": "XMLHttpRequest",
+          },
+          error: function (err) {
+            console.log('Error!', err);
+            document.getElementById("savenotispin-" + curData.name).style.display = "none";
+          },
+          success: function (data) {
+            InitationData = InitCall();
+            document.getElementById("savenotispin-" + curData.name).style.display = "none";
+            localStorage.setItem('token', data.id_token);
+          }
+        });
+      });
+
+      notificationdivdiv.appendChild(notificationdivdiv_1_div);
+      notificationdivdiv.appendChild(notibar);
+      notificationdivdiv.appendChild(notitabbuttondiv);
+
+      var notip = document.createElement("p");
+      notificationdivdiv.appendChild(notip);
+      notificationdivdiv.appendChild(tabcontent);
+      notificationdiv.appendChild(notificationdivdiv);
+      notificationdiv.appendChild(notisavebuttondiv);
+
+      if (curData.notifications.length != 0) totaldiv.appendChild(notificationdiv);
+
+      var horizonline_min_3 = document.createElement("hr");
+      horizonline_min_3.size = "4";
+      horizonline_min_3.width = "100%";
+      horizonline_min_3.color = "blue";
+      totaldiv.appendChild(horizonline_min_3);
+
+      /////////////////////////////////////////////////////////////////////////////////
+
+      //   ////////////////////////////////Prefix///////////////////////////////////////////
+      var prefixdiv = document.createElement("div");
+      prefixdiv.className = "container";
+
+      var prefixtotdiv = document.createElement("div");
+      prefixtotdiv.className = "row";
+
+      //////////////////////////////////////////////////first//////////////////////////////////////////
+      var prefixfirstdiv = document.createElement("div");
+      prefixfirstdiv.className = "col-md-1";
+      var prefixstrong = document.createElement("strong");
+      prefixstrong.innerText = "Prefix";
+      prefixfirstdiv.appendChild(prefixstrong);
+      prefixtotdiv.appendChild(prefixfirstdiv);
+      ///////////////////////////////////////////////second//////////////////////////////////////////
+      var prefixseconddiv = document.createElement("div");
+      prefixseconddiv.className = "col-md-5";
+      var prefixtextarea = document.createElement("textarea");
+      prefixtextarea.className = "form-control";
+      prefixtextarea.rows = "2";
+      prefixtextarea.placeholder = "01.02.03.04.05.06.07.08.09.11.44.55.88.77";
+      prefixtextarea.innerText = curData.prefixes;
+      prefixtextarea.style.width = "100%";
+      prefixtextarea.id = "prefixtext-" + curData.name;
+
+      prefixseconddiv.appendChild(prefixtextarea);
+      prefixtotdiv.appendChild(prefixseconddiv);
+
+      //////////////////////////////////////////third?//////////////////////////////////////////////////
+      var prefixthirddiv = document.createElement("div");
+      prefixthirddiv.className = "col-md-3";
+      var prefixsavebutton = document.createElement("button");
+      prefixsavebutton.innerText = "Save";
+      prefixsavebutton.className = "btn btn-primary";
+      prefixsavebutton.type = "button";
+
+      var prefixsavebutton = document.createElement("button");
+      prefixsavebutton.className = "btn btn-primary";
+      prefixsavebutton.type = "button";
+      prefixsavebutton.style.display = "flex";
+      prefixsavebutton.style.alignItems = "center";
+      prefixsavebutton.style.justifyContent = "space-between";
+      prefixsavebutton.style.flexWrap = "nowrap";
+      prefixsavebutton.style.flexDirection = "row"; prefixsavebutton.innerText = "Save";
+
+      prefixsavebuttonspinner = document.createElement("div");
+      prefixsavebuttonspinner.className = "spinner-border spinner-border-sm";
+      prefixsavebuttonspinner.role = "status";
+      prefixsavebuttonspinner.id = "saveprespin-" + curData.name;
+      prefixsavebuttonspinner.style.display = "none";
+
+
+
+      prefixsavebutton.appendChild(prefixsavebuttonspinner);
+      prefixthirddiv.appendChild(prefixsavebutton);
+      prefixtotdiv.appendChild(prefixthirddiv);
+
+      prefixdiv.appendChild(prefixtotdiv);
+      totaldiv.appendChild(prefixdiv);
+
+      prefixsavebutton.addEventListener('click', function () {
+        var flag;
+        var formData = "country_iso3=" + countrycode + "&network=" + curData.name + "&prefixes=";
+
+        var currentText = document.getElementById("prefixtext-" + curData.name).value;
+
+        formData += encodeURIComponent(currentText);
+
+        console.log(formData);
+
+        $.ajax({
+          url: ("https://cors-anywhere.herokuapp.com/" + localhttp +
+            "index.php?route=api/status/setNetworkPrefixes&access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvd3d3LmJldGEud2FyaWNlbC5jb21cLyIsImF1ZCI6Imh0dHBzOlwvXC93d3cuYmV0YS53YXJpY2VsLmNvbVwvIiwiaWF0IjoxNjI5MDg4ODg0LCJuYmYiOjE2MjkwODg4ODQsImV4cCI6MTk0NDQ0ODg4NCwiZGF0YSI6eyJjdXN0b21lcl9pZCI6IjE5NiIsInRva2VuX3R5cGUiOiJBQ0NFU1MifX0.WhqZYYrpEBwUDmy8Rvknqqhun0m95VCb1bY7gcbBI60"
+          ),
+          type: 'POST',
+          data: formData,
+          beforeSend: function () {
+            document.getElementById("saveprespin-" + curData.name).style.display = "block";
+          },
+          headers: {
+            Authorization: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvd3d3LmJldGEud2FyaWNlbC5jb21cLyIsImF1ZCI6Imh0dHBzOlwvXC93d3cuYmV0YS53YXJpY2VsLmNvbVwvIiwiaWF0IjoxNjI5MDg4ODg0LCJuYmYiOjE2MjkwODg4ODQsImV4cCI6MTk0NDQ0ODg4NCwiZGF0YSI6eyJjdXN0b21lcl9pZCI6IjE5NiIsInRva2VuX3R5cGUiOiJBQ0NFU1MifX0.WhqZYYrpEBwUDmy8Rvknqqhun0m95VCb1bY7gcbBI60",
+            "x-requested-with": "XMLHttpRequest",
+          },
+          error: function (err) {
+            console.log('Error!', err);
+            document.getElementById("saveprespin-" + curData.name).style.display = "none";
+          },
+          success: function (data) {
+            InitationData = InitCall();
+            document.getElementById("saveprespin-" + curData.name).style.display = "none";
+            localStorage.setItem('token', data.id_token);
+          }
+        });
+      });
+
+
+      //   /////////////////////////////////////////////////////////////////////////////////
+
+      document.getElementById("mybody").appendChild(totaldiv);
+      for (let tabindex in curData.notifications) {
+        document.getElementById(curData.notifications[tabindex].language + "-tab").setAttribute("aria-controls", curData
+          .notifications[tabindex].language);
+        document.getElementById(curData.notifications[tabindex].language + "-tab").setAttribute("data-bs-toggle",
+          "pill");
+        document.getElementById(curData.notifications[tabindex].language + "-tab").setAttribute("data-bs-target", "#" +
+          curData.notifications[tabindex].language);
+        document.getElementById("li" + curData.notifications[tabindex].language).setAttribute("role", "presentation");
+        document.getElementById(curData.notifications[tabindex].language + "-tab").setAttribute("role", "tab");
+        document.getElementById(curData.notifications[tabindex].language).setAttribute("role", "tabpanel");
+        document.getElementById(curData.notifications[tabindex].language).setAttribute("aria-labelledby", curData
+          .notifications[tabindex].language + "-tab");
+        document.getElementById("myTab").setAttribute("role", "tablist");
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg" style="padding-left: 10vw">
+    <div class="container">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="myList"></ul>
+    </div>
+  </nav>
+  <main class="container" id="mybody">
+</body>
+
+</html>
